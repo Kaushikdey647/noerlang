@@ -31,6 +31,12 @@ const char* keywords[MAX_KEYWORDS] = {
     "for",
     "foreach",
     "switch",
+     "break",      
+    "continue",    
+    "return",      
+    "true",        
+    "false",       
+    "null",       
     // ADD MORE IF NEEDED
 };
 
@@ -40,6 +46,9 @@ const char* arithmetic_ops[MAX_ARITHMETIC_OPS] ={
     "*",
     "/",
     "%",
+    "^",   
+    "++",  
+    "--",  
     // ADD MORE IF NEEDED
 };
 
@@ -50,5 +59,8 @@ const char* relational_ops[MAX_RELATIONAL_OPS] ={
     "<",
     ">=",
     "<=",
+    "!=",  
+    "&&",  
+    "||",  
     // ADD MORE IF NEEDED
 };
