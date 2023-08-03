@@ -15,7 +15,7 @@ typedef struct trie_node{
 
 trie_node* create_node();
 
-void insert_token(trie_node* root, char* token_type, char* token);
+void insert_token(trie_node* root, char* token_type, const char* token);
 
 trie_node* search_token(trie_node* root, char* token);
 

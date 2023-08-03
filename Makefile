@@ -1,17 +1,35 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -Werror -std=c99
 LDFLAGS = -lm
 
-SRCS = main.c token_dict.c tokens.c trie.c
-OBJS = $(SRCS:.c=.o)
+SRCDIR = src
+OBJDIR = obj
+BINDIR = bin
 
-all: main
+SOURCES = $(wildcard $(SRCDIR)/*.c)
+OBJECTS = $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SOURCES))
+EXECUTABLE = $(BINDIR)/main
 
-main: $(OBJS)
-    $(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+.PHONY: all clean
 
-%.o: %.c
-    $(CC) $(CFLAGS) -c -o $@ $<
+all: $(EXECUTABLE)
+
+$(EXECUTABLE): $(OBJECTS)
+	$(CC) $(LDFLAGS) $^ -o $@
+
+$(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
+
+$(BINDIR):
+	mkdir -p $(BINDIR)
 
 clean:
-    rm -f $(OBJS) main
+	rm -rf $(OBJDIR) $(BINDIR)
+
+$(EXECUTABLE): | $(BINDIR)
+
+$(BINDIR):
+	mkdir -p $(BINDIR)

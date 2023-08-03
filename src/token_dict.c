@@ -45,7 +45,7 @@ int reset_pointer(token_dict_t* dict_ptr){
 
 int advance_pointer(token_dict_t* dict_ptr, char c){
 
-    if(dict_ptr->pointer->children[c] == NULL){
+    if(dict_ptr->pointer->children[(int)c] == NULL){
         
         //invalid character, reset pointer
         reset_pointer(dict_ptr);
@@ -53,7 +53,7 @@ int advance_pointer(token_dict_t* dict_ptr, char c){
 
     }
 
-    dict_ptr->pointer = dict_ptr->pointer->children[c];
+    dict_ptr->pointer = dict_ptr->pointer->children[(int)c];
 
     if(dict_ptr->pointer->is_end){
 

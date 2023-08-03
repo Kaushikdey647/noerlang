@@ -1,4 +1,6 @@
 #include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "trie.h"
 
@@ -12,13 +14,13 @@ trie_node* create_node(){
     return node;
 }
 
-void insert_token(trie_node* root, char* token_type, char* token){
+void insert_token(trie_node* root, char* token_type, const char* token){
     trie_node* curr = root;
-    for(int i=0; i<strlen(token); i++){
-        if(curr->children[token[i]] == NULL){
-            curr->children[token[i]] = create_node();
+    for(size_t i=0; i<strlen(token); i++){
+        if(curr->children[(int)token[i]] == NULL){
+            curr->children[(int)token[i]] = create_node();
         }
-        curr = curr->children[token[i]];
+        curr = curr->children[(int)token[i]];
     }
     curr->is_end = 1;
     curr->token_type = token_type;
@@ -26,11 +28,11 @@ void insert_token(trie_node* root, char* token_type, char* token){
 
 trie_node* search_token(trie_node* root, char* token){
     trie_node* curr = root;
-    for(int i=0; i<strlen(token); i++){
-        if(curr->children[token[i]] == NULL){
+    for(size_t i=0; i<strlen(token); i++){
+        if(curr->children[(int)token[i]] == NULL){
             return NULL;
         }
-        curr = curr->children[token[i]];
+        curr = curr->children[(int)token[i]];
     }
     if(curr->is_end == 1){
         return curr;
@@ -40,11 +42,11 @@ trie_node* search_token(trie_node* root, char* token){
 
 void delete_token(trie_node* root, char* token){
     trie_node* curr = root;
-    for(int i=0; i<strlen(token); i++){
-        if(curr->children[token[i]] == NULL){
+    for(size_t i=0; i<strlen(token); i++){
+        if(curr->children[(int)token[i]] == NULL){
             return;
         }
-        curr = curr->children[token[i]];
+        curr = curr->children[(int)token[i]];
     }
     if(curr->is_end == 1){
         curr->is_end = 0;
