@@ -1,0 +1,9 @@
+# add bin and obj to .gitignore
+
+/bin
+
+/obj
+
+# add .vscode
+
+/.vscode
