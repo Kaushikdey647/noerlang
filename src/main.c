@@ -74,22 +74,15 @@ void tokenize(char* str, dfa* dfa_list, int dfa_num){
                     }
                 }
 
-                //reset the state
-                states[j] = 0;
-                last_reset[j] = i;
-
             }
 
         }
 
         //if best_candidate is not -1
         if( best_candidate != -1 ){
-            
-            //if retracting, then retract
-            i -= dfa_list[best_candidate].retracting;
 
             //add the token
-            char* value = malloc(sizeof(char) * (best_prefix_length + 1));
+            char* value = malloc(sizeof(char) * best_prefix_length);
             strncpy(value, str + last_reset[best_candidate], best_prefix_length);
             value[best_prefix_length] = '\0';
             add_tokens(dfa_list[best_candidate].label, value);
@@ -99,6 +92,9 @@ void tokenize(char* str, dfa* dfa_list, int dfa_num){
                 states[j] = 0;
                 last_reset[j] = i;
             }
+
+            //if retracting, then retract
+            i -= dfa_list[best_candidate].retracting;
 
             //reset the best candidate
             best_candidate = -1;
