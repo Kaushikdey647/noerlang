@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "trie.h": "c",
-        "dfa.h": "c",
-        "stdlib.h": "c"
-    }
-}
