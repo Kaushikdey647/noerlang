@@ -33,3 +33,6 @@ $(EXECUTABLE): | $(BINDIR)
 
 $(BINDIR):
 	mkdir -p $(BINDIR)
+
+exec: $(EXECUTABLE)
+	./$(EXECUTABLE)

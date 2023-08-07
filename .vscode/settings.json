@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "trie.h": "c"
+        "trie.h": "c",
+        "dfa.h": "c",
+        "stdlib.h": "c"
     }
 }
