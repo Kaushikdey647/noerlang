@@ -22,13 +22,14 @@ void add_tokens(char* label, char* value){
 
 void print_tokens(){
     for(int i = 0; i < token_counter; i++){
-        printf("%s: %s\n", tokens[i].label, tokens[i].value);
+        printf("(%s: %s)\n", tokens[i].value, tokens[i].label);
     }
 }
 
 void tokenize(char* str, dfa* dfa_list, int dfa_num){
     int i = 0;
-    
+    // i f x   = 1  /0
+    // 0 1 2 3 4 5   6
     //initialize the states for all dfas
     int* states = malloc(sizeof(int) * dfa_num);
     int* last_reset = malloc(sizeof(int) * dfa_num);
@@ -42,7 +43,7 @@ void tokenize(char* str, dfa* dfa_list, int dfa_num){
     }
 
     //iterate through the string
-    while( str[i] != '\0' && i < 256 ){
+    while( str[i] != '\0'){
         
         //iterate through the dfas and update the curent states
         for(int j = 0; j < dfa_num; j++){
@@ -52,19 +53,30 @@ void tokenize(char* str, dfa* dfa_list, int dfa_num){
             //if states[j] is -1, reset it to 0
             if( states[j] == -1 ){
                 states[j] = 0;
-                last_reset[j] = i - dfa_list[j].retracting;
+                last_reset[j] = i;
             }
 
             //is states[j] an accepting state?
-            if( states[j] == dfa_list[j].accept_state ){
+            else if( states[j] == dfa_list[j].accept_state ){
 
                 //check if the token is longer than the current best candidate
-                int token_length = i - (last_reset[j] + 1);
+                int token_length = i - last_reset[j];
+
 
                 if( token_length > best_prefix_length ){
                     best_candidate = j;
                     best_prefix_length = token_length;
                 }
+                else if( token_length == best_prefix_length ){
+                    if( dfa_list[j].priority > dfa_list[best_candidate].priority ){
+                        best_candidate = j;
+                        best_prefix_length = token_length;
+                    }
+                }
+
+                //reset the state
+                states[j] = 0;
+                last_reset[j] = i;
 
             }
 
@@ -72,6 +84,9 @@ void tokenize(char* str, dfa* dfa_list, int dfa_num){
 
         //if best_candidate is not -1
         if( best_candidate != -1 ){
+            
+            //if retracting, then retract
+            i -= dfa_list[best_candidate].retracting;
 
             //add the token
             char* value = malloc(sizeof(char) * (best_prefix_length + 1));
@@ -79,13 +94,19 @@ void tokenize(char* str, dfa* dfa_list, int dfa_num){
             value[best_prefix_length] = '\0';
             add_tokens(dfa_list[best_candidate].label, value);
 
-            // if( dfa_list[best_candidate].retracting ){
-            //     i -= 1;
-            // }
+            //reset all the states
+            for(int j = 0; j < dfa_num; j++){
+                states[j] = 0;
+                last_reset[j] = i;
+            }
+
+            //reset the best candidate
+            best_candidate = -1;
+            best_prefix_length = 0;
             
         }
 
-        i++;
+        i += 1;
 
     }
 }
@@ -93,7 +114,7 @@ void tokenize(char* str, dfa* dfa_list, int dfa_num){
 int main(){
 
     //malloc for 6 dfas
-    dfa* dfas = malloc(sizeof(dfa) * 7);
+    dfa* dfas = malloc(sizeof(dfa) * 8);
 
     //initialize all dfas
     dfas[0] = identifier_automaton();
@@ -103,6 +124,7 @@ int main(){
     dfas[4] = else_automaton();
     dfas[5] = relop_automaton();
     dfas[6] = float_automaton();
+    dfas[7] = then_automaton();
 
     //allocate 256 characters for input
     char* input = malloc(sizeof(char) * 256);
@@ -113,7 +135,7 @@ int main(){
     fgets(input, 256, stdin);
 
     //tokenize the input
-    tokenize(input, dfas, 6);
+    tokenize(input, dfas, 8);
 
     print_tokens();
 

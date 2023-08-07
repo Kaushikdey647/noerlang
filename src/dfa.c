@@ -26,6 +26,7 @@ dfa identifier_automaton(){
     automaton.accept_state = 2; //accepting state
     automaton.retracting = 1; //retracting dfa state
     automaton.label = "IDENTIFIER";
+    automaton.priority = 1;
 
     //reset all transitions to -1
     for(int i = 0; i < MAX_STATES; i++){
@@ -92,6 +93,7 @@ dfa integer_automaton(){
     automaton.accept_state = 2; //accepting state
     automaton.retracting = 1; //retracting dfa state
     automaton.label = "INTEGER";
+    automaton.priority = 2;
 
     //reset all transitions to -1
     for(int i = 0; i < MAX_STATES; i++){
@@ -153,6 +155,7 @@ dfa float_automaton(){
     automaton.accept_state = 3; //accepting state
     automaton.retracting = 1; //retracting dfa state
     automaton.label = "FLOAT";
+    automaton.priority = 2;
 
     //reset all transitions to -1
     for(int i = 0; i < MAX_STATES; i++){
@@ -223,8 +226,9 @@ dfa if_automaton(){
     
     automaton.start_state = 0; //start state
     automaton.accept_state = 3; //accepting state
-    automaton.retracting = 0; //retracting dfa state
+    automaton.retracting = 1; //retracting dfa state
     automaton.label = "IF";
+    automaton.priority = 3;
 
     //reset all transitions to -1
     for(int i = 0; i < MAX_STATES; i++){
@@ -273,6 +277,7 @@ dfa elsif_automaton(){
     automaton.accept_state = 4; //accepting state
     automaton.retracting = 1; //retracting dfa state
     automaton.label = "ELSIF";
+    automaton.priority = 3;
 
     //reset all transitions to -1
     for(int i = 0; i < MAX_STATES; i++){
@@ -330,6 +335,7 @@ dfa else_automaton(){
     automaton.accept_state = 5; //accepting state
     automaton.retracting = 0; //retracting dfa state
     automaton.label = "ELSE";
+    automaton.priority = 3;
 
     //reset all transitions to -1
     for(int i = 0; i < MAX_STATES; i++){
@@ -349,6 +355,53 @@ dfa else_automaton(){
 
     //reset all transitions from 'e' as 4
     automaton.transitions[3][(int)'e'] = 4;
+
+    //reset all transitions from ' ' as 5
+    automaton.transitions[4][(int)' '] = 5;
+
+    //reset all transitions from '\t' as 5
+    automaton.transitions[4][(int)'\t'] = 5;
+
+    //reset all transitions from '\n' as 5
+    automaton.transitions[4][(int)'\n'] = 5;
+
+    //return the automaton
+    return automaton;
+
+}
+
+/**
+ * Acceptor for 'then'
+*/
+
+dfa then_automaton(){
+
+    dfa automaton;
+    
+    automaton.start_state = 0; //start state
+    automaton.accept_state = 4; //accepting state
+    automaton.retracting = 1; //retracting dfa state
+    automaton.label = "THEN";
+    automaton.priority = 3;
+
+    //reset all transitions to -1
+    for(int i = 0; i < MAX_STATES; i++){
+        for(int j = 0; j < MAX_SYMBOLS; j++){
+            automaton.transitions[i][j] = -1;
+        }
+    }
+
+    //reset all transitions from t as 1
+    automaton.transitions[0][(int)'t'] = 1;
+
+    //reset all transitions from h as 2
+    automaton.transitions[1][(int)'h'] = 2;
+
+    //reset all transitions from e as 3
+    automaton.transitions[2][(int)'e'] = 3;
+
+    //reset all transitions from n as 4
+    automaton.transitions[3][(int)'n'] = 4;
 
     //reset all transitions from ' ' as 5
     automaton.transitions[4][(int)' '] = 5;
@@ -387,6 +440,7 @@ dfa relop_automaton(){
     automaton.accept_state = 8; //accepting state
     automaton.retracting = 1; //retracting dfa state
     automaton.label = "RELOP";
+    automaton.priority = 3;
 
     //reset all transitions to -1
     for(int i = 0; i < MAX_STATES; i++){

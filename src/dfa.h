@@ -9,6 +9,7 @@ typedef struct dfa {
     int start_state;
     int accept_state;
     int retracting;
+    int priority;
     char* label;
     int transitions[MAX_STATES][MAX_SYMBOLS];
 } dfa;
@@ -24,6 +25,8 @@ dfa if_automaton();
 dfa elsif_automaton();
 
 dfa else_automaton();
+
+dfa then_automaton();
 
 dfa relop_automaton();
 
