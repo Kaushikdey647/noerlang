@@ -17,3 +17,5 @@
 - **Parser**:
     - `bison -v bas.y`
     - `yacc -v -d bas.y`
+- **Compiler**:
+    - `gcc -ll y.tab.c`

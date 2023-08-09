@@ -17,7 +17,6 @@ negation "~"|"!"
 assign "="|"+="|"-="|"*="|"/="|"%="
 additive "+"|"-"
 multiplicative "*"|"/"|"%"
-punctuator ";"|"{"|"}"|"("|")"|"["|"]"|","
 
 identifier {alpha}({alpha}|{digit}|"_")*
 integer {digit}+
@@ -35,26 +34,28 @@ string \"([^\\\n]|(\\.))*?\"
 "else" {return ELSE;}
 "while" {return WHILE;}
 "break" {return BREAK;}
-"continue" {return CONTINUE;}
 "return" {return RETURN;}
-"null" {return NULL;}
+"void" {return VOID;}
 "true" {return TRUE;}
 "false" {return FALSE;}
 "static" {return STATIC;}
+
 comment|block_comment {;}
+
 {unary} {return UNARY;}
 {relational} {return RELATIONAL;}
 {logical} {return LOGICAL;}
 {assign} {return ASSIGN;}
 {additive} {return ADDITIVE;}
 {multiplicative} {return MULTIPLICATIVE;}
-{punctuator} {return PUNCTUATOR;}
 {negation} {return NEGATION;}
 {identifier} {return IDENTIFIER;}
 {integer} {return INTEGER;}
 {float} {return FLOATING;}
 {string} {return STRING;}
-[ \t]* {;}
+
+/* Handle Whitespaces and newlines */
+[ \t]+ {;}
 "\n" {sent_count++;}
 . {return *yytext;}
 
@@ -63,11 +64,3 @@ comment|block_comment {;}
 int yywrap(void) {
     return 1;
 }
-
-int main(int argc, char **argv) {
-    yyin = fopen(argv[1], "r");
-    yylex();
-    printf("Total number of lines: %d\n", sent_count);
-    return 0;
-}
-

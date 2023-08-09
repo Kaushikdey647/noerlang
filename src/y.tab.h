@@ -70,7 +70,10 @@ extern int yydebug;
     MULTIPLICATIVE = 276,
     UNARY = 277,
     TRUE = 278,
-    FALSE = 279
+    FALSE = 279,
+    STATIC = 280,
+    THEN = 281,
+    VOID = 282
   };
 #endif
 /* Tokens.  */
@@ -96,6 +99,9 @@ extern int yydebug;
 #define UNARY 277
 #define TRUE 278
 #define FALSE 279
+#define STATIC 280
+#define THEN 281
+#define VOID 282
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
