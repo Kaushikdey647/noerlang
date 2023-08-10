@@ -1,31 +1,22 @@
-# Define the source and object directories
-SRCDIR := src
-OBJDIR := obj
+# Makefile for compiling bas.l and bas.y using flex, yacc, and gcc
 
-# Define the source and object files
-LEXSRC := $(SRCDIR)/bas.l
-YACCSRC := $(SRCDIR)/bas.y
-YACCHDR := $(OBJDIR)/y.tab.h
-BIN := bin
+SRC_DIR := src
+BIN_DIR := bin
+LEX_FILE := bas.l
+YACC_FILE := bas.y
+OUTPUT_BINARY := $(BIN_DIR)/bas
 
-# Define the compiler and flags
-CC := gcc
-CFLAGS := -Wall -Wextra -Wpedantic
+.PHONY: all clean
 
-# Create the bin and object directories if they do not exist
-$(shell mkdir -p $(OBJDIR))
-$(shell mkdir -p $(BIN))
+all: $(OUTPUT_BINARY)
 
-# Define the targets and dependencies
-all: $(BIN)
+$(OUTPUT_BINARY): $(SRC_DIR)/$(LEX_FILE) $(SRC_DIR)/$(YACC_FILE) | $(BIN_DIR)
+	flex -o $(BIN_DIR)/lex.yy.c $(SRC_DIR)/$(LEX_FILE)
+	yacc -o $(BIN_DIR)/y.tab.c -d $(SRC_DIR)/$(YACC_FILE)
+	gcc -o $(OUTPUT_BINARY) $(BIN_DIR)/y.tab.c -ll
 
-$(BIN): $(YACCHDR)
-	$(CC) $(CFLAGS) $(YACCSRC) -ll -o $@
-
-$(YACCHDR): $(YACCSRC)
-	yacc -v -d -o $(OBJDIR)/y.tab.c $<
-
-.PHONY: clean
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
 
 clean:
-	rm -rf $(OBJDIR) $(BIN)
+	rm -rf $(BIN_DIR)
