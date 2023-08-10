@@ -84,9 +84,11 @@ exp {digits}("."{digits})?([eE][+-]?{digits})?
 "?" { printf("QUESTION\n"); }
 ":" { printf("COLON\n"); }
 "..." { printf("ELLIPSIS\n"); }
-"//" { /* ignore single-line comments */ }
-"/*" { /* ignore multi-line comments */ }
-.|\n { /* ignore other characters */ }
+"//" {  }
+"/*" {  }
+[ \t\n] {  }
+. { printf("UNKNOWN %s\n", yytext); }
+
 %%
 
 int main(int argc, char **argv)

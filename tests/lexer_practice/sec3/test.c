@@ -7,6 +7,8 @@ main()
     input(count);
     for(i=0;i<10;i++)
     {
+        input(1x);
+        input(`x);
         input(x);
         total= total+x;
     }
