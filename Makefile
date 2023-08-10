@@ -1,38 +1,31 @@
-CC = gcc
-CFLAGS = -Wall -Wextra -Werror -std=c99
-LDFLAGS = -lm
+# Define the source and object directories
+SRCDIR := src
+OBJDIR := obj
 
-SRCDIR = src
-OBJDIR = obj
-BINDIR = bin
+# Define the source and object files
+LEXSRC := $(SRCDIR)/bas.l
+YACCSRC := $(SRCDIR)/bas.y
+YACCHDR := $(OBJDIR)/y.tab.h
+BIN := bin
 
-SOURCES = $(wildcard $(SRCDIR)/*.c)
-OBJECTS = $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SOURCES))
-EXECUTABLE = $(BINDIR)/main
+# Define the compiler and flags
+CC := gcc
+CFLAGS := -Wall -Wextra -Wpedantic
 
-.PHONY: all clean
+# Create the bin and object directories if they do not exist
+$(shell mkdir -p $(OBJDIR))
+$(shell mkdir -p $(BIN))
 
-all: $(EXECUTABLE)
+# Define the targets and dependencies
+all: $(BIN)
 
-$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(LDFLAGS) $^ -o $@
+$(BIN): $(YACCHDR)
+	$(CC) $(CFLAGS) $(YACCSRC) -ll -o $@
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+$(YACCHDR): $(YACCSRC)
+	yacc -v -d -o $(OBJDIR)/y.tab.c $<
 
-$(OBJDIR):
-	mkdir -p $(OBJDIR)
-
-$(BINDIR):
-	mkdir -p $(BINDIR)
+.PHONY: clean
 
 clean:
-	rm -rf $(OBJDIR) $(BINDIR)
-
-$(EXECUTABLE): | $(BINDIR)
-
-$(BINDIR):
-	mkdir -p $(BINDIR)
-
-exec: $(EXECUTABLE)
-	./$(EXECUTABLE)
+	rm -rf $(OBJDIR) $(BIN)

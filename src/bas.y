@@ -1,7 +1,8 @@
 %{
-    #include <stdio.h>
-    #include <string.h>
-    #include <stdlib.h>
+    #include<stdio.h>
+    #include<string.h>
+    #include<stdlib.h>
+    #include<ctype.h>
     #include "lex.yy.c"
 
     void yyerror(const char *s);
@@ -174,9 +175,14 @@ const: INTEGER
 
 %%
 
+#ifndef MAIN_DEFINED
+#define MAIN_DEFINED
+
 int main(){
     yyparse();
 }
+
+#endif
 
 void yyerror(const char *msg){
     fprintf(stderr, "%s\n", msg);

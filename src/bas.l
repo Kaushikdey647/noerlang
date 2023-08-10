@@ -1,5 +1,5 @@
 %{
-
+#define MAIN_DEFINED
 #include "y.tab.h"
 
 int sent_count = 0; /*Keeping track of line number*/
@@ -53,8 +53,6 @@ comment|block_comment {;}
 {integer} {return INTEGER;}
 {float} {return FLOATING;}
 {string} {return STRING;}
-
-/* Handle Whitespaces and newlines */
 [ \t]+ {;}
 "\n" {sent_count++;}
 . {return *yytext;}
