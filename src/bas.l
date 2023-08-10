@@ -1,8 +1,8 @@
 %{
-#define MAIN_DEFINED
-#include "y.tab.h"
+    
+    #include "y.tab.h"
 
-int sent_count = 0; /*Keeping track of line number*/
+    int sent_count = 0; /*Keeping track of line number*/
 
 %}
 
@@ -21,7 +21,8 @@ multiplicative "*"|"/"|"%"
 identifier {alpha}({alpha}|{digit}|"_")*
 integer {digit}+
 float {digit}+"."{digit}+
-string \"([^\\\n]|(\\.))*?\"
+char ['].[']
+string ["]([^\\\n]|(\\.))*?["]
 
 %%
 
@@ -53,12 +54,15 @@ comment|block_comment {;}
 {integer} {return INTEGER;}
 {float} {return FLOATING;}
 {string} {return STRING;}
-[ \t]+ {;}
-"\n" {sent_count++;}
-. {return *yytext;}
+{char} {return CHAR;}
+\/\/.* { ; }
+\/\*(.*\n)*.*\*\/ { ; } 
+[ \t]* { ; }
+[\n] { sent_count++; }
+. { return *yytext; }
 
 %%
 
-int yywrap(void) {
+int yywrap() {
     return 1;
 }

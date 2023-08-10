@@ -15,7 +15,7 @@ STRING_TYPE INTEGER FLOATING STRING
 IF ELSE WHILE BREAK RETURN ASSIGN
 IDENTIFIER LOGICAL NEGATION RELATIONAL
 ADDITIVE MULTIPLICATIVE UNARY TRUE
-FALSE STATIC THEN VOID
+FALSE STATIC THEN VOID CHAR
 
 %%
 
@@ -168,6 +168,7 @@ arg_list: arg_list ',' expression
 const: INTEGER
 | FLOATING
 | STRING
+| CHAR
 | TRUE
 | FALSE
 | VOID
@@ -175,15 +176,10 @@ const: INTEGER
 
 %%
 
-#ifndef MAIN_DEFINED
-#define MAIN_DEFINED
-
 int main(){
     yyparse();
 }
 
-#endif
-
 void yyerror(const char *msg){
-    fprintf(stderr, "%s\n", msg);
+    fprintf(stderr, "%s at line %d \n", msg, yylineno);
 }
