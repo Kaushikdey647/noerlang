@@ -16,6 +16,8 @@ IF ELSE WHILE BREAK RETURN ASSIGN
 IDENTIFIER LOGICAL NEGATION RELATIONAL
 ADDITIVE MULTIPLICATIVE UNARY TRUE
 FALSE STATIC THEN VOID CHAR
+LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET
+COMMA SEMICOLON QUESTION DOT ARROW COLON REASSIGN
 
 %%
 
@@ -31,23 +33,23 @@ declaration: var_declaration
 | fun_declaration
 ;
 
-var_declaration: type_specifier var_decl_list ';'
+var_declaration: type_specifier var_decl_list SEMICOLON
 ;
 
-scoped_var_declaration: STATIC type_specifier var_decl_list ';'
-| type_specifier var_decl_list ';'
+scoped_var_declaration: STATIC type_specifier var_decl_list SEMICOLON
+| type_specifier var_decl_list SEMICOLON
 ;
 
-var_decl_list: var_decl_list ',' var_decl_init
+var_decl_list: var_decl_list COMMA var_decl_init
 | var_decl_init
 ;
 
 var_decl_init: var_decl_id
-| var_decl_id '=' simple_exp
+| var_decl_id ASSIGN simple_exp
 ;
 
 var_decl_id: IDENTIFIER
-| IDENTIFIER '[' INTEGER ']'
+| IDENTIFIER LBRACKET INTEGER RBRACKET
 ;
 
 type_specifier: INT_TYPE
@@ -56,15 +58,15 @@ type_specifier: INT_TYPE
 | STRING_TYPE
 ;
 
-fun_declaration: type_specifier IDENTIFIER '(' params ')' stmt
-| IDENTIFIER '(' params ')' stmt
+fun_declaration: type_specifier IDENTIFIER LPAREN params RPAREN stmt
+| IDENTIFIER LPAREN params RPAREN stmt
 ;
 
 params: param_list
 | 
 ;
 
-param_list: param_list ';' param_type
+param_list: param_list SEMICOLON param_type
 | param_type
 ;
 
@@ -72,7 +74,7 @@ param_type: type_specifier param_id
 ;
 
 param_id: IDENTIFIER
-| IDENTIFIER '[' ']'
+| IDENTIFIER LBRACKET RBRACKET
 ;
 
 stmt: expression_stmt
@@ -83,11 +85,11 @@ stmt: expression_stmt
 | break_stmt
 ;
 
-expression_stmt: expression ';'
-| ';'
+expression_stmt: expression SEMICOLON
+| SEMICOLON
 ;
 
-compound_stmt: '{' local_declarations stmt_list '}'
+compound_stmt: LBRACE local_declarations stmt_list RBRACE
 ;
 
 local_declarations: local_declarations scoped_var_declaration
@@ -102,17 +104,18 @@ selection_stmt: IF simple_exp THEN stmt
 | IF simple_exp THEN stmt ELSE stmt
 ;
 
-iteration_stmt: WHILE '(' expression ')' stmt
+iteration_stmt: WHILE LPAREN expression RPAREN stmt
 ;
 
-return_stmt: RETURN ';'
-| RETURN expression ';'
+return_stmt: RETURN SEMICOLON
+| RETURN expression SEMICOLON
 ;
 
-break_stmt: BREAK ';'
+break_stmt: BREAK SEMICOLON
 ;
 
-expression: mutable ASSIGN expression
+expression: mutable REASSIGN expression
+| mutable ASSIGN expression
 | simple_exp
 ;
 
@@ -146,22 +149,22 @@ factor: immutable
 
 
 mutable: IDENTIFIER
-| IDENTIFIER '[' expression ']'
+| IDENTIFIER LBRACKET expression RBRACKET
 ;
 
-immutable: '(' expression ')'
+immutable: LPAREN expression RPAREN
 | call
 | const
 ;
 
-call: IDENTIFIER '(' args ')'
+call: IDENTIFIER LPAREN args RPAREN
 ;
 
 args: arg_list
 | 
 ;
 
-arg_list: arg_list ',' expression
+arg_list: arg_list COMMA expression
 | expression
 ;
 

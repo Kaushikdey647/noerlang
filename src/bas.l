@@ -14,9 +14,22 @@ unary "++"|"--"
 relational "<"|">"|"<="|">="|"=="|"!="
 logical "&&"|"||"
 negation "~"|"!"
-assign "="|"+="|"-="|"*="|"/="|"%="
+reassign "+="|"-="|"*="|"/="|"%="
+assign "="
 additive "+"|"-"
 multiplicative "*"|"/"|"%"
+lparen "("
+rparen ")"
+lbrace "{"
+rbrace "}"
+lbracket "["
+rbracket "]"
+comma ","
+semicolon ";"
+colon ":"
+question "?"
+dot "."
+arrow "->"
 
 identifier {alpha}({alpha}|{digit}|"_")*
 integer {digit}+
@@ -43,10 +56,25 @@ string ["]([^\\\n]|(\\.))*?["]
 
 comment|block_comment {;}
 
+{lparen} {return LPAREN;}
+{rparen} {return RPAREN;}
+{lbrace} {return LBRACE;}
+{rbrace} {return RBRACE;}
+{lbracket} {return LBRACKET;}
+{rbracket} {return RBRACKET;}
+{comma} {return COMMA;}
+{semicolon} {return SEMICOLON;}
+{colon} {return COLON;}
+{question} {return QUESTION;}
+{dot} {return DOT;}
+{arrow} {return ARROW;}
+
+
 {unary} {return UNARY;}
 {relational} {return RELATIONAL;}
 {logical} {return LOGICAL;}
 {assign} {return ASSIGN;}
+{reassign} {return REASSIGN;}
 {additive} {return ADDITIVE;}
 {multiplicative} {return MULTIPLICATIVE;}
 {negation} {return NEGATION;}
