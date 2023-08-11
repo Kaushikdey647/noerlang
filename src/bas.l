@@ -53,6 +53,10 @@ string ["]([^\\\n]|(\\.))*?["]
 "true" {return TRUE;}
 "false" {return FALSE;}
 "static" {return STATIC;}
+"#include" {return INCLUDE;}
+"#define" {return DEFINE;}
+"const" {return CONST;}
+"main" {return MAIN;}
 
 comment|block_comment {;}
 
@@ -68,7 +72,6 @@ comment|block_comment {;}
 {question} {return QUESTION;}
 {dot} {return DOT;}
 {arrow} {return ARROW;}
-
 
 {unary} {return UNARY;}
 {relational} {return RELATIONAL;}

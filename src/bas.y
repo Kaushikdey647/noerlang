@@ -18,12 +18,21 @@ ADDITIVE MULTIPLICATIVE UNARY TRUE
 FALSE STATIC THEN VOID CHAR
 LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET
 COMMA SEMICOLON QUESTION DOT ARROW COLON REASSIGN
+INCLUDE DEFINE CONST MAIN
 
 %%
 
 /* HIGHER LEVEL PROGRAM GRAMMAR */
-program: declaration_list
+program: preproc_dir_list declaration_list
 ;
+
+preproc_dir_list: preproc_dir preproc_dir_list
+|
+;
+
+preproc_dir: INCLUDE STRING
+| DEFINE IDENTIFIER
+| DEFINE IDENTIFIER const
 
 declaration_list: declaration_list declaration
 | declaration
@@ -184,5 +193,5 @@ int main(){
 }
 
 void yyerror(const char *msg){
-    fprintf(stderr, "%s at line %d \n", msg, yylineno);
+    fprintf(stderr, " [ line: %d ] %s at at token %s \n", yylineno, msg, yytext);
 }
