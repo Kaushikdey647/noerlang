@@ -7,90 +7,59 @@
 %}
 
 %option yylineno
-
-alpha [a-zA-Z]
-digit [0-9]
-unary "++"|"--"
-relational "<"|">"|"<="|">="|"=="|"!="
-logical "&&"|"||"
-negation "~"|"!"
-reassign "+="|"-="|"*="|"/="|"%="
-assign "="
-additive "+"|"-"
-multiplicative "*"|"/"|"%"
-lparen "("
-rparen ")"
-lbrace "{"
-rbrace "}"
-lbracket "["
-rbracket "]"
-comma ","
-semicolon ";"
-colon ":"
-question "?"
-dot "."
-arrow "->"
-
-identifier {alpha}({alpha}|{digit}|"_")*
-integer {digit}+
-float {digit}+"."{digit}+
-char ['].[']
-string ["]([^\\\n]|(\\.))*?["]
-
 %%
 
-"int" {return INT_TYPE;}
-"float" {return FLOAT_TYPE;}
-"char" {return CHAR_TYPE;}
-"string" {return STRING_TYPE;}
-"if" {return IF;}
-"then" {return THEN;}
-"else" {return ELSE;}
-"while" {return WHILE;}
-"break" {return BREAK;}
-"return" {return RETURN;}
-"void" {return VOID;}
-"true" {return TRUE;}
-"false" {return FALSE;}
-"static" {return STATIC;}
-"#include" {return INCLUDE;}
-"#define" {return DEFINE;}
-"const" {return CONST;}
-"main" {return MAIN;}
-
-comment|block_comment {;}
-
-{lparen} {return LPAREN;}
-{rparen} {return RPAREN;}
-{lbrace} {return LBRACE;}
-{rbrace} {return RBRACE;}
-{lbracket} {return LBRACKET;}
-{rbracket} {return RBRACKET;}
-{comma} {return COMMA;}
-{semicolon} {return SEMICOLON;}
-{colon} {return COLON;}
-{question} {return QUESTION;}
-{dot} {return DOT;}
-{arrow} {return ARROW;}
-
-{unary} {return UNARY;}
-{relational} {return RELATIONAL;}
-{logical} {return LOGICAL;}
-{assign} {return ASSIGN;}
-{reassign} {return REASSIGN;}
-{additive} {return ADDITIVE;}
-{multiplicative} {return MULTIPLICATIVE;}
-{negation} {return NEGATION;}
-{identifier} {return IDENTIFIER;}
-{integer} {return INTEGER;}
-{float} {return FLOATING;}
-{string} {return STRING;}
-{char} {return CHAR;}
-\/\/.* { ; }
-\/\*(.*\n)*.*\*\/ { ; } 
-[ \t]* { ; }
-[\n] { sent_count++; }
-. { return *yytext; }
+"and"                   { return AND; }
+":="                    { return ASSIGN; }
+":"                     { return COLON; }
+","                     { return COMMA; }
+"def"                   { return DEF; }
+"/"                     { return DIV; }
+"\."                    { return DOT; }
+"if"                    { return IF; }
+"else"                  { return ELSE; }
+"end"                   { return END; }
+"="                     { return EQ; }
+"exit"                  { return EXITLOOP; }
+"float"                 { return FLOAT; }
+[0-9]+\.[0-9]+          { yylval.float_val = atof(yytext); return FLOAT_CONST; }
+"%d"|"%f"|"%s"          { return FORMAT; }
+"from"                  { return FROM; }
+"fun"                   { return FUN; }
+">="                    { return GE; }
+"global"                { return GLOBAL; }
+">"                     { return GT; }
+[0-9]+                  { yylval.int_val = atoi(yytext); return INT_CONST; }
+"("                     { return LEFT_PAREN; }
+"["                     { return LEFT_SQ_BKT; }
+"<="                    { return LE; }
+"<"                     { return LT; }
+"-"                     { return MINUS; }
+"mod"                   { return MOD; }
+"\*"                    { return MULT; }
+"<>"                    { return NE; }
+"not"                   { return NOT; }
+"null"                  { return NUL; }
+"or"                    { return OR; }
+"\+"                    { return PLUS; }
+"print"                 { return PRINT; }
+"product"               { return PRODUCT; }
+"read"                  { return READ; }
+"return"                { return RETURN; }
+"->"                    { return RETURNS; }
+")"                     { return RIGHT_PAREN; }
+"]"                     { return RIGHT_SQ_BKT; }
+";"                     { return SEMICOLON; }
+"skip"                  { return SKIP; }
+"step"                  { return STEP; }
+\"([^\\\"]|\\.)*\"      { yylval.str_val = strdup(yytext); return STRING; }
+"to"                    { return TO; }
+"while"                 { return WHILE; }
+[a-zA-Z][a-zA-Z0-9_]*   { yylval.str_val = strdup(yytext); return ID; }
+[ \t]*                  { ; }
+[\n]                    { sent_count++; }
+\/\/.*\n                {} /*Ignore comments*/
+.                       { fprintf(stderr, "Error: Unexpected character: %s\n", yytext); }
 
 %%
 

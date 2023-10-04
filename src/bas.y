@@ -4,194 +4,254 @@
     #include<stdlib.h>
     #include<ctype.h>
     #include "lex.yy.c"
-
+    int complete_flag = 0;
     void yyerror(const char *s);
     int yylex();
     int yywrap();
 %}
 
-%token INT_TYPE FLOAT_TYPE CHAR_TYPE
-STRING_TYPE INTEGER FLOATING STRING
-IF ELSE WHILE BREAK RETURN ASSIGN
-IDENTIFIER LOGICAL NEGATION RELATIONAL
-ADDITIVE MULTIPLICATIVE UNARY TRUE
-FALSE STATIC THEN VOID CHAR
-LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET
-COMMA SEMICOLON QUESTION DOT ARROW COLON REASSIGN
-INCLUDE DEFINE CONST MAIN
-
-%%
-
-/* HIGHER LEVEL PROGRAM GRAMMAR */
-program: preproc_dir_list declaration_list
-;
-
-preproc_dir_list: preproc_dir preproc_dir_list
-|
-;
-
-preproc_dir: INCLUDE STRING
-| DEFINE IDENTIFIER
-| DEFINE IDENTIFIER const
-
-declaration_list: declaration_list declaration
-| declaration
-;
-
-declaration: var_declaration
-| fun_declaration
-;
-
-var_declaration: type_specifier var_decl_list SEMICOLON
-;
-
-scoped_var_declaration: STATIC type_specifier var_decl_list SEMICOLON
-| type_specifier var_decl_list SEMICOLON
-;
-
-var_decl_list: var_decl_list COMMA var_decl_init
-| var_decl_init
-;
-
-var_decl_init: var_decl_id
-| var_decl_id ASSIGN simple_exp
-;
-
-var_decl_id: IDENTIFIER
-| IDENTIFIER LBRACKET INTEGER RBRACKET
-;
-
-type_specifier: INT_TYPE
-| FLOAT_TYPE
-| CHAR_TYPE
-| STRING_TYPE
-;
-
-fun_declaration: type_specifier IDENTIFIER LPAREN params RPAREN stmt
-| IDENTIFIER LPAREN params RPAREN stmt
-;
-
-params: param_list
-| 
-;
-
-param_list: param_list SEMICOLON param_type
-| param_type
-;
-
-param_type: type_specifier param_id
-;
-
-param_id: IDENTIFIER
-| IDENTIFIER LBRACKET RBRACKET
-;
-
-stmt: expression_stmt
-| compound_stmt
-| selection_stmt
-| iteration_stmt
-| return_stmt
-| break_stmt
-;
-
-expression_stmt: expression SEMICOLON
-| SEMICOLON
-;
-
-compound_stmt: LBRACE local_declarations stmt_list RBRACE
-;
-
-local_declarations: local_declarations scoped_var_declaration
-| 
-;
-
-stmt_list: stmt_list stmt
-| 
-;
-
-selection_stmt: IF simple_exp THEN stmt
-| IF simple_exp THEN stmt ELSE stmt
-;
-
-iteration_stmt: WHILE LPAREN expression RPAREN stmt
-;
-
-return_stmt: RETURN SEMICOLON
-| RETURN expression SEMICOLON
-;
-
-break_stmt: BREAK SEMICOLON
-;
-
-expression: mutable REASSIGN expression
-| mutable ASSIGN expression
-| simple_exp
-;
-
-simple_exp: simple_exp LOGICAL unary_rel_exp
-| unary_rel_exp
-;
-
-
-unary_rel_exp: NEGATION rel_exp
-| rel_exp
-;
-
-rel_exp: additive_exp RELATIONAL additive_exp
-| additive_exp
-;
-
-additive_exp: additive_exp ADDITIVE multiplicative_exp
-| multiplicative_exp
-;
-
-multiplicative_exp: multiplicative_exp MULTIPLICATIVE unary_exp
-| unary_exp
-;
-
-unary_exp: UNARY unary_exp
-| factor
-;
-
-factor: immutable
-| mutable
-
-
-mutable: IDENTIFIER
-| IDENTIFIER LBRACKET expression RBRACKET
-;
-
-immutable: LPAREN expression RPAREN
-| call
-| const
-;
-
-call: IDENTIFIER LPAREN args RPAREN
-;
-
-args: arg_list
-| 
-;
-
-arg_list: arg_list COMMA expression
-| expression
-;
-
-const: INTEGER
-| FLOATING
-| STRING
-| CHAR
-| TRUE
-| FALSE
-| VOID
-;
-
-%%
-
-int main(){
-    yyparse();
+%union {
+    int int_val;
+    float float_val;
+    char *str_val;
 }
+
+%token AND ASSIGN COLON COMMA DEF DIV DOT ELSE END
+EQ EXITLOOP FLOAT FLOAT_CONST FORMAT FROM FUN GE
+GLOBAL GT ID IF INT INT_CONST LEFT_PAREN LEFT_SQ_BKT
+LE LT MINUS MOD MULT NE NOT NUL OR PLUS PRINT PRODUCT
+READ RETURN RETURNS RIGHT_PAREN RIGHT_SQ_BKT SEMICOLON
+SKIP STEP STRING TO WHILE
+
+%left PLUS MINUS
+%left MULT DIV MOD
+%nonassoc DOT
+%left AND OR
+%nonassoc UNARY
+%right UPLUS UMINUS
+%nonassoc NOT
+
+%start s
+
+%%
+
+s: prog {
+    complete_flag = 1;
+    return 0;
+}
+
+prog: GLOBAL declList stmtList END
+    ;
+
+declList: decl declList
+    | /* empty */
+    ;
+
+decl: DEF typeList END
+    | FUN funDef END
+    ;
+
+typeList: typeList SEMICOLON varList COLON type
+    | varList COLON type
+    | typeDef
+    ;
+
+varList: var COMMA varList
+    | var
+    ;
+
+var: ID sizeListO
+    ;
+
+sizeListO: sizeList
+    | /* empty */
+    ;
+
+sizeList: sizeList LEFT_SQ_BKT INT_CONST RIGHT_SQ_BKT
+    | LEFT_SQ_BKT INT_CONST RIGHT_SQ_BKT
+    ;
+
+type: INT
+    | FLOAT
+    | STRING
+    | NUL
+    | typeDef
+    | ID
+    ;
+
+typeDef: ID ASSIGN PRODUCT typeList END
+    ;
+
+funDef: funID fparamListO RETURNS type funBody
+    ;
+
+funID: ID
+    ;
+
+fparamListO: fparamList
+    | /* empty */
+    ;
+
+fparamList: fparamList SEMICOLON pList COLON type
+    | pList COLON type
+    ;
+
+pList: pList COMMA idP
+    | idP
+    ;
+
+idP: ID sizeListO
+    ;
+
+funBody: declList stmtListO
+    ;
+
+stmtListO: stmtList
+    | /* empty */
+    ;
+
+stmtList: stmtList SEMICOLON stmt
+    | stmt
+    ;
+
+stmt: assignmentStmt
+    | readStmt
+    | printStmt
+    | ifStmt
+    | whileStmt
+    | loopStmt
+    | callStmt
+    | returnStmt
+    | exitLoop
+    | skip
+    ;
+
+assignmentStmt: dotId ASSIGN exp
+    ;
+
+dotId: id
+    | id DOT dotId
+    ;
+
+readStmt: READ FORMAT exp
+    ;
+
+printStmt: PRINT STRING
+    | PRINT FORMAT exp
+    ;
+
+ifStmt: IF bExp COLON stmtList elsePart END
+    ;
+
+elsePart: ELSE stmtList
+    | /* empty */
+    ;
+
+whileStmt: WHILE bExp COLON stmtList END
+    ;
+
+loopStmt: FROM id ASSIGN exp TO exp stepPart COLON stmtListO END
+    ;
+
+stepPart: STEP exp
+    | 
+    ;
+
+callStmt: LEFT_PAREN ID COLON actParamList RIGHT_PAREN
+    ;
+
+returnStmt: RETURN expO
+    ;
+
+expO: exp
+    | /* empty */
+    ;
+
+exitLoop: EXITLOOP
+    ;
+
+skip: SKIP
+    ;
+
+id: ID indxListO
+    ;
+
+indxListO: indxList
+    | /* empty */
+    ;
+
+indxList: indxList LEFT_SQ_BKT exp RIGHT_SQ_BKT
+    | LEFT_SQ_BKT exp RIGHT_SQ_BKT
+    ;
+
+bExp: bExp OR bExp
+    | bExp AND bExp
+    | NOT bExp
+    | LEFT_PAREN bExp RIGHT_PAREN
+    | exp relOP exp
+    ;
+
+relOP: EQ
+    | LE
+    | LT
+    | GE
+    | GT
+    | NE
+    ;
+
+exp: exp PLUS exp
+    | exp MINUS exp
+    | exp MULT exp
+    | exp DIV exp
+    | exp MOD exp
+    | MINUS exp %prec UNARY
+    | PLUS exp %prec UNARY
+    | exp DOT exp
+    | LEFT_PAREN exp RIGHT_PAREN
+    | id
+    | LEFT_PAREN ID COLON actParamListO RIGHT_PAREN
+    | INT_CONST
+    | FLOAT_CONST
+    ;
+
+actParamListO: actParamList
+    | /* empty */
+    ;
+
+actParamList: actParamList COMMA exp
+    | exp
+    ;
+
+%%
+
+extern FILE* yyin;  // Declare the input file pointer
 
 void yyerror(const char *msg){
     fprintf(stderr, " [ line: %d ] %s at at token %s \n", yylineno, msg, yytext);
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <input_file>\n", argv[0]);
+        return 1;
+    }
+
+    // Open the input file
+    yyin = fopen(argv[1], "r");
+    if (!yyin) {
+        perror("Error opening input file");
+        return 1;
+    }
+
+    yyparse();  // Run the parser on the input file
+
+    if(complete_flag){
+        printf("Program Executed Succesfully\n");
+    }
+    else{
+        printf("Invalid Program Structure / Semantic Error\n");
+    }
+
+    fclose(yyin);  // Close the input file
+    return 0;
 }
