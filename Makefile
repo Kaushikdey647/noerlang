@@ -5,8 +5,10 @@ BIN_DIR := bin
 LEX_FILE := bas.l
 YACC_FILE := bas.y
 OUTPUT_BINARY := $(BIN_DIR)/bas
+SAMPLE_DIR := sample_source
+TEST_SAMPLE :=
 
-.PHONY: all clean
+.PHONY: all clean run
 
 all: $(OUTPUT_BINARY)
 
@@ -17,6 +19,12 @@ $(OUTPUT_BINARY): $(SRC_DIR)/$(LEX_FILE) $(SRC_DIR)/$(YACC_FILE) | $(BIN_DIR)
 
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
+
+run-cli:
+	./$(OUTPUT_BINARY)
+
+run-file: $(OUTPUT_BINARY)
+	./$(OUTPUT_BINARY) $(SAMPLE_DIR)/$(TEST_SAMPLE)
 
 clean:
 	rm -rf $(BIN_DIR)

@@ -10,180 +10,71 @@
     int yywrap();
 %}
 
-%token INT_TYPE FLOAT_TYPE CHAR_TYPE
-STRING_TYPE INTEGER FLOATING STRING
-IF ELSE WHILE BREAK RETURN ASSIGN
-IDENTIFIER LOGICAL NEGATION RELATIONAL
-ADDITIVE MULTIPLICATIVE UNARY TRUE
-FALSE STATIC THEN VOID CHAR
-LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET
-COMMA SEMICOLON QUESTION DOT ARROW COLON REASSIGN
-INCLUDE DEFINE CONST MAIN
+%union {
+    int int_val;
+    float float_val;
+}
+
+
+%token LPAREN RPAREN PLUS MINUS
+MULT DIV DIV_FLOOR MOD NOT AND OR XOR TERM
+
+%token <int_val> INT_CONST
+%token <float_val> FLOAT_CONST
+
+%type <int_val> int_expr
+%type <float_val> float_expr
+
+%left PLUS MINUS
+%left MULT DIV DIV_FLOOR MOD
+%left AND OR XOR
+%right UNARY_MINUS
+%right NOT
 
 %%
 
-/* HIGHER LEVEL PROGRAM GRAMMAR */
-program: preproc_dir_list declaration_list
+main: main calc
+| calc
 ;
 
-preproc_dir_list: preproc_dir preproc_dir_list
-|
+calc: float_expr TERM					{ printf("%f\n", $1); }
+| int_expr TERM							{ printf("%d\n", $1); }
 ;
 
-preproc_dir: INCLUDE STRING
-| DEFINE IDENTIFIER
-| DEFINE IDENTIFIER const
-
-declaration_list: declaration_list declaration
-| declaration
+float_expr: FLOAT_CONST					{$$ = $1;}
+| MINUS float_expr %prec UNARY_MINUS	{$$ = -$2;}
+| NOT float_expr %prec NOT				{$$ = !$2;}
+| float_expr PLUS float_expr			{$$ = $1 + $3;}
+| float_expr PLUS int_expr				{$$ = $1 + $3;}
+| int_expr PLUS float_expr				{$$ = $1 + $3;}
+| float_expr MINUS float_expr			{$$ = $1 - $3;}
+| float_expr MINUS int_expr				{$$ = $1 - $3;}
+| int_expr MINUS float_expr				{$$ = $1 - $3;}
+| float_expr MULT float_expr			{$$ = $1 * $3;}
+| float_expr MULT int_expr				{$$ = $1 * $3;}
+| int_expr MULT float_expr				{$$ = $1 * $3;}
+| float_expr DIV float_expr				{$$ = (float)$1 / (float)$3;}
+| int_expr DIV int_expr					{$$ = (float)$1 / (float)$3;}
+| float_expr DIV int_expr				{$$ = (float)$1 / (float)$3;}
+| int_expr DIV float_expr				{$$ = (float)$1 / (float)$3;}
+| LPAREN float_expr RPAREN				{$$ = $2;}
 ;
 
-declaration: var_declaration
-| fun_declaration
-;
-
-var_declaration: type_specifier var_decl_list SEMICOLON
-;
-
-scoped_var_declaration: STATIC type_specifier var_decl_list SEMICOLON
-| type_specifier var_decl_list SEMICOLON
-;
-
-var_decl_list: var_decl_list COMMA var_decl_init
-| var_decl_init
-;
-
-var_decl_init: var_decl_id
-| var_decl_id ASSIGN simple_exp
-;
-
-var_decl_id: IDENTIFIER
-| IDENTIFIER LBRACKET INTEGER RBRACKET
-;
-
-type_specifier: INT_TYPE
-| FLOAT_TYPE
-| CHAR_TYPE
-| STRING_TYPE
-;
-
-fun_declaration: type_specifier IDENTIFIER LPAREN params RPAREN stmt
-| IDENTIFIER LPAREN params RPAREN stmt
-;
-
-params: param_list
-| 
-;
-
-param_list: param_list SEMICOLON param_type
-| param_type
-;
-
-param_type: type_specifier param_id
-;
-
-param_id: IDENTIFIER
-| IDENTIFIER LBRACKET RBRACKET
-;
-
-stmt: expression_stmt
-| compound_stmt
-| selection_stmt
-| iteration_stmt
-| return_stmt
-| break_stmt
-;
-
-expression_stmt: expression SEMICOLON
-| SEMICOLON
-;
-
-compound_stmt: LBRACE local_declarations stmt_list RBRACE
-;
-
-local_declarations: local_declarations scoped_var_declaration
-| 
-;
-
-stmt_list: stmt_list stmt
-| 
-;
-
-selection_stmt: IF simple_exp THEN stmt
-| IF simple_exp THEN stmt ELSE stmt
-;
-
-iteration_stmt: WHILE LPAREN expression RPAREN stmt
-;
-
-return_stmt: RETURN SEMICOLON
-| RETURN expression SEMICOLON
-;
-
-break_stmt: BREAK SEMICOLON
-;
-
-expression: mutable REASSIGN expression
-| mutable ASSIGN expression
-| simple_exp
-;
-
-simple_exp: simple_exp LOGICAL unary_rel_exp
-| unary_rel_exp
-;
-
-
-unary_rel_exp: NEGATION rel_exp
-| rel_exp
-;
-
-rel_exp: additive_exp RELATIONAL additive_exp
-| additive_exp
-;
-
-additive_exp: additive_exp ADDITIVE multiplicative_exp
-| multiplicative_exp
-;
-
-multiplicative_exp: multiplicative_exp MULTIPLICATIVE unary_exp
-| unary_exp
-;
-
-unary_exp: UNARY unary_exp
-| factor
-;
-
-factor: immutable
-| mutable
-
-
-mutable: IDENTIFIER
-| IDENTIFIER LBRACKET expression RBRACKET
-;
-
-immutable: LPAREN expression RPAREN
-| call
-| const
-;
-
-call: IDENTIFIER LPAREN args RPAREN
-;
-
-args: arg_list
-| 
-;
-
-arg_list: arg_list COMMA expression
-| expression
-;
-
-const: INTEGER
-| FLOATING
-| STRING
-| CHAR
-| TRUE
-| FALSE
-| VOID
+int_expr: INT_CONST						{$$ = $1;}
+| MINUS int_expr %prec UNARY_MINUS		{$$ = -$2;}
+| NOT int_expr %prec NOT				{$$ = !$2;}
+| int_expr PLUS int_expr				{$$ = $1 + $3;}
+| int_expr MINUS int_expr				{$$ = $1 + $3;}
+| int_expr MULT int_expr				{$$ = $1 + $3;}
+| int_expr MOD int_expr					{$$ = $1 + $3;}
+| int_expr DIV_FLOOR int_expr			{$$ = (int)($1 / $3);}
+| int_expr DIV_FLOOR float_expr			{$$ = (int)($1 / $3);}
+| float_expr DIV_FLOOR int_expr			{$$ = (int)($1 / $3);}
+| float_expr DIV_FLOOR float_expr		{$$ = (int)($1 / $3);}
+| int_expr AND int_expr					{$$ = $1 & $3;}
+| int_expr OR int_expr					{$$ = $1 | $3;}
+| int_expr XOR int_expr					{$$ = $1 ^ $3;}
+| LPAREN int_expr RPAREN				{$$ = $2;}
 ;
 
 %%
@@ -193,5 +84,5 @@ int main(){
 }
 
 void yyerror(const char *msg){
-    fprintf(stderr, " [ line: %d ] %s at at token %s \n", yylineno, msg, yytext);
+    fprintf(stderr, " [ line: %d ] %s at at token [ '%s' ] \n", yylineno, msg, yytext);
 }

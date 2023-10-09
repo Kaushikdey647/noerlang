@@ -8,89 +8,33 @@
 
 %option yylineno
 
-alpha [a-zA-Z]
 digit [0-9]
-unary "++"|"--"
-relational "<"|">"|"<="|">="|"=="|"!="
-logical "&&"|"||"
-negation "~"|"!"
-reassign "+="|"-="|"*="|"/="|"%="
-assign "="
-additive "+"|"-"
-multiplicative "*"|"/"|"%"
-lparen "("
-rparen ")"
-lbrace "{"
-rbrace "}"
-lbracket "["
-rbracket "]"
-comma ","
-semicolon ";"
-colon ":"
-question "?"
-dot "."
-arrow "->"
-
-identifier {alpha}({alpha}|{digit}|"_")*
-integer {digit}+
+int {digit}+
 float {digit}+"."{digit}+
-char ['].[']
-string ["]([^\\\n]|(\\.))*?["]
 
 %%
 
-"int" {return INT_TYPE;}
-"float" {return FLOAT_TYPE;}
-"char" {return CHAR_TYPE;}
-"string" {return STRING_TYPE;}
-"if" {return IF;}
-"then" {return THEN;}
-"else" {return ELSE;}
-"while" {return WHILE;}
-"break" {return BREAK;}
-"return" {return RETURN;}
-"void" {return VOID;}
-"true" {return TRUE;}
-"false" {return FALSE;}
-"static" {return STATIC;}
-"#include" {return INCLUDE;}
-"#define" {return DEFINE;}
-"const" {return CONST;}
-"main" {return MAIN;}
-
-comment|block_comment {;}
-
-{lparen} {return LPAREN;}
-{rparen} {return RPAREN;}
-{lbrace} {return LBRACE;}
-{rbrace} {return RBRACE;}
-{lbracket} {return LBRACKET;}
-{rbracket} {return RBRACKET;}
-{comma} {return COMMA;}
-{semicolon} {return SEMICOLON;}
-{colon} {return COLON;}
-{question} {return QUESTION;}
-{dot} {return DOT;}
-{arrow} {return ARROW;}
-
-{unary} {return UNARY;}
-{relational} {return RELATIONAL;}
-{logical} {return LOGICAL;}
-{assign} {return ASSIGN;}
-{reassign} {return REASSIGN;}
-{additive} {return ADDITIVE;}
-{multiplicative} {return MULTIPLICATIVE;}
-{negation} {return NEGATION;}
-{identifier} {return IDENTIFIER;}
-{integer} {return INTEGER;}
-{float} {return FLOATING;}
-{string} {return STRING;}
-{char} {return CHAR;}
-\/\/.* { ; }
-\/\*(.*\n)*.*\*\/ { ; } 
-[ \t]* { ; }
-[\n] { sent_count++; }
-. { return *yytext; }
+"(" {return LPAREN;}
+")" {return RPAREN;}
+"+" {return PLUS;}
+"-" {return MINUS;}
+"*" {return MULT;}
+"/" {return DIV;}
+"//" {return DIV_FLOOR;}
+"%" {return MOD;}
+"!" {return NOT;}
+"&" {return AND;}
+"|" {return OR;}
+"^" {return XOR;}
+{float} {
+    yylval.float_val = atof(yytext);
+    return FLOAT_CONST;
+}
+{int} {
+    yylval.int_val = atoi(yytext);
+    return INT_CONST;
+}
+"\n" {return TERM;}
 
 %%
 
