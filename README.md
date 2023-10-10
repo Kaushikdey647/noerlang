@@ -1,5 +1,5 @@
-# NOERLANG
-## idk about erlang but this one cannot throw errors lol
+# OBSIDIAN
+## yes it does sound awesome!
 
 ## Key Components
 - **Lexer**:
