@@ -1,0 +1,5 @@
+// a basic declaration statement
+int16   a = 10;
+int32   b = 8589934592;
+int64   c = 73786976303428140000;
+str     s = "Hello There";
