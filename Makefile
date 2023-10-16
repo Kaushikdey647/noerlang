@@ -15,6 +15,8 @@ all: $(OUTPUT_BINARY)
 $(OUTPUT_BINARY): $(SRC_DIR)/$(LEX_FILE) $(SRC_DIR)/$(YACC_FILE) | $(BIN_DIR)
 	flex -o $(BIN_DIR)/lex.yy.c $(SRC_DIR)/$(LEX_FILE)
 	yacc -o $(BIN_DIR)/y.tab.c -d $(SRC_DIR)/$(YACC_FILE)
+	cp $(SRC_DIR)/ast.c $(BIN_DIR)
+	cp $(SRC_DIR)/ast.h $(BIN_DIR)
 	gcc -o $(OUTPUT_BINARY) $(BIN_DIR)/y.tab.c -ll
 
 $(BIN_DIR):
