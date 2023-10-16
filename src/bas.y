@@ -43,7 +43,6 @@ calc: float_expr TERM					{ printf("%f\n", $1); }
 
 float_expr: FLOAT_CONST					{$$ = $1;}
 | MINUS float_expr %prec UNARY_MINUS	{$$ = -$2;}
-| NOT float_expr %prec NOT				{$$ = !$2;}
 | float_expr PLUS float_expr			{$$ = $1 + $3;}
 | float_expr PLUS int_expr				{$$ = $1 + $3;}
 | int_expr PLUS float_expr				{$$ = $1 + $3;}
@@ -64,9 +63,9 @@ int_expr: INT_CONST						{$$ = $1;}
 | MINUS int_expr %prec UNARY_MINUS		{$$ = -$2;}
 | NOT int_expr %prec NOT				{$$ = !$2;}
 | int_expr PLUS int_expr				{$$ = $1 + $3;}
-| int_expr MINUS int_expr				{$$ = $1 + $3;}
-| int_expr MULT int_expr				{$$ = $1 + $3;}
-| int_expr MOD int_expr					{$$ = $1 + $3;}
+| int_expr MINUS int_expr				{$$ = $1 - $3;}
+| int_expr MULT int_expr				{$$ = $1 * $3;}
+| int_expr MOD int_expr					{$$ = $1 % $3;}
 | int_expr DIV_FLOOR int_expr			{$$ = (int)($1 / $3);}
 | int_expr DIV_FLOOR float_expr			{$$ = (int)($1 / $3);}
 | float_expr DIV_FLOOR int_expr			{$$ = (int)($1 / $3);}

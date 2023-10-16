@@ -1,9 +1,5 @@
 %{
-    
     #include "y.tab.h"
-
-    int sent_count = 0; /*Keeping track of line number*/
-
 %}
 
 %option yylineno
