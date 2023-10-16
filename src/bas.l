@@ -6,8 +6,6 @@
 
 digit [0-9]
 int {digit}+
-float {digit}+"."{digit}+
-
 %%
 
 "(" {return LPAREN;}
@@ -16,19 +14,14 @@ float {digit}+"."{digit}+
 "-" {return MINUS;}
 "*" {return MULT;}
 "/" {return DIV;}
-"//" {return DIV_FLOOR;}
 "%" {return MOD;}
 "!" {return NOT;}
 "&" {return AND;}
 "|" {return OR;}
 "^" {return XOR;}
-{float} {
-    yylval.float_val = atof(yytext);
-    return FLOAT_CONST;
-}
 {int} {
     yylval.int_val = atoi(yytext);
-    return INT_CONST;
+    return NUM;
 }
 "\n" {return TERM;}
 
