@@ -20,7 +20,7 @@ int {digit}+
 "|" {return OR;}
 "^" {return XOR;}
 {int} {
-    yylval.int_val = atoi(yytext);
+    yylval.number = atoi(yytext);
     return NUM;
 }
 "\n" {return TERM;}

@@ -39,9 +39,9 @@ void print_ast(ASTNode* node, int depth) {
         printf("  ");
     }
 
-    if (node->type != NULL) {
-        printf("%s", node->type);
-        if (strcmp(node->type, "Number") == 0) {
+    if (node != NULL) {
+        printf("%c", node->type);
+        if ( node->type == 'N') {
             printf("(%d)\n", node->value);
         } else {
             printf("\n");

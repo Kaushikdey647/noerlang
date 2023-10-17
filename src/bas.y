@@ -8,21 +8,19 @@
     void yyerror(const char *s);
     int yylex();
     int yywrap();
-    ASTNode* root;
 %}
-
-%union {
-    int int_val;
-    ASTNode* ast_node;
-}
-
 
 %token LPAREN RPAREN PLUS MINUS
 MULT DIV MOD NOT AND OR XOR TERM
 
-%token <int_val> NUM
+%union{
+    struct ASTNode ast_node;
+    int number;
+}
 
-%type <ast_node> expr
+%token <number> NUM
+
+%type <ast_node> main calc expr
 
 %left PLUS MINUS
 %left MULT DIV MOD
@@ -37,8 +35,7 @@ main: main calc
 ;
 
 calc: expr TERM					{
-    root = $1;
-    print_ast(root,0); //print the ast
+    print_ast($1,0); //print the ast
     printf("\n");
 }
 ;

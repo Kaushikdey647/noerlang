@@ -8,12 +8,10 @@ typedef struct ASTNode {
     struct ASTNode* right;
 } ASTNode;
 
+ASTNode* create_unary_op_node(char type, ASTNode* left);
+ASTNode* create_binary_op_node(char type, ASTNode* left, ASTNode* right);
 ASTNode* create_number_node(int value);
-ASTNode* create_add_node(ASTNode* left, ASTNode* right);
-ASTNode* create_subtract_node(ASTNode* left, ASTNode* right);
-ASTNode* create_multiply_node(ASTNode* left, ASTNode* right);
-ASTNode* create_divide_node(ASTNode* left, ASTNode* right);
-
+void print_ast(ASTNode* node, int depth);
 void free_ast(ASTNode* node);
 
 #endif
