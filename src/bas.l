@@ -1,6 +1,7 @@
 %{
     #include "y.tab.h"
     #include "ast.h"
+    #include "dag.h"
 %}
 
 %option yylineno

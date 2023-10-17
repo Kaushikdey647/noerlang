@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include "ast.h"
 
-ASTNode* create_number_node(int value) {
-    ASTNode* node = (ASTNode*)malloc(sizeof(ASTNode));
+struct ASTNode* create_number_node(int value) {
+    struct ASTNode* node = (struct ASTNode*)malloc(sizeof(struct ASTNode));
     node->type = 'N';
     node->value = value;
     node->left = NULL;
@@ -11,8 +11,8 @@ ASTNode* create_number_node(int value) {
     return node;
 }
 
-ASTNode* create_unary_op_node(char type, ASTNode* left) {
-    ASTNode* node = (ASTNode*)malloc(sizeof(ASTNode));
+struct ASTNode* create_unary_op_node(char type, struct ASTNode* left) {
+    struct ASTNode* node = (struct ASTNode*)malloc(sizeof(struct ASTNode));
     node->type = type;
     node->value = 0;
     node->left = left;
@@ -20,8 +20,8 @@ ASTNode* create_unary_op_node(char type, ASTNode* left) {
     return node;
 }
 
-ASTNode* create_binary_op_node(char type, ASTNode* left, ASTNode* right) {
-    ASTNode* node = (ASTNode*)malloc(sizeof(ASTNode));
+struct ASTNode* create_binary_op_node(char type, struct ASTNode* left, struct ASTNode* right) {
+    struct ASTNode* node = (struct ASTNode*)malloc(sizeof(struct ASTNode));
     node->type = type;
     node->value = 0;
     node->left = left;
@@ -29,7 +29,7 @@ ASTNode* create_binary_op_node(char type, ASTNode* left, ASTNode* right) {
     return node;
 }
 
-void print_ast(ASTNode* node, int depth) {
+void print_ast(struct ASTNode* node, int depth) {
     if (node == NULL) {
         return;
     }
@@ -49,7 +49,7 @@ void print_ast(ASTNode* node, int depth) {
     print_ast(node->right, depth + 1);
 }
 
-void free_ast(ASTNode* node) {
+void free_ast(struct ASTNode* node) {
     if (node == NULL) {
         return;
     }

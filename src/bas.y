@@ -6,6 +6,7 @@
     void yyerror(const char *s);
     int yylex();
     int yywrap();
+
 %}
 
 %union{
@@ -38,6 +39,11 @@ main: main calc
 calc: expr TERM					{
     $$ = $1;
     print_ast($$,0); //print the ast
+    struct DAGHashMap* dag_hash_map = create_hash_map();
+    struct DAGNode* dag_root = create_dag_from_ast($$, dag_hash_map); //create the dag
+    visualize_dag(dag_root); //visualize the dag
+    delete_dag(dag_root); //delete the dag
+    delete_hash_map(dag_hash_map); //delete the hash map
     free_ast($$); //free the ast
     printf("\n");
 }

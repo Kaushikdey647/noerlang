@@ -13,11 +13,15 @@ TEST_SAMPLE :=
 all: $(OUTPUT_BINARY)
 
 $(OUTPUT_BINARY): $(SRC_DIR)/$(LEX_FILE) $(SRC_DIR)/$(YACC_FILE) | $(BIN_DIR)
+
+	cp $(SRC_DIR)/*.c $(BIN_DIR)
+	cp $(SRC_DIR)/*.h $(BIN_DIR)
+
 	flex -o $(BIN_DIR)/lex.yy.c $(SRC_DIR)/$(LEX_FILE)
 	yacc -o $(BIN_DIR)/y.tab.c -d $(SRC_DIR)/$(YACC_FILE)
-	cp $(SRC_DIR)/ast.c $(BIN_DIR)
-	cp $(SRC_DIR)/ast.h $(BIN_DIR)
-	gcc -o $(OUTPUT_BINARY) $(BIN_DIR)/y.tab.c $(BIN_DIR)/ast.c -ll
+	gcc -o $(OUTPUT_BINARY) $(BIN_DIR)/y.tab.c \
+			$(BIN_DIR)/ast.c $(BIN_DIR)/dag.c\
+			-ll
 
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
