@@ -14,7 +14,7 @@
 MULT DIV MOD NOT AND OR XOR TERM
 
 %union{
-    struct ASTNode ast_node;
+    ASTNode* ast_node;
     int number;
 }
 
@@ -35,7 +35,9 @@ main: main calc
 ;
 
 calc: expr TERM					{
-    print_ast($1,0); //print the ast
+    $$ = $1;
+    print_ast($$,0); //print the ast
+    free_ast($$); //free the ast
     printf("\n");
 }
 ;
@@ -51,7 +53,7 @@ expr: NUM					    {$$ = create_number_node($1);}
 | expr AND expr					{$$ = create_binary_op_node('&', $1, $3);}
 | expr OR expr					{$$ = create_binary_op_node('|', $1, $3);}
 | expr XOR expr					{$$ = create_binary_op_node('^', $1, $3);}
-| LPAREN expr RPAREN			{$$ = create_number_node($2);}
+| LPAREN expr RPAREN			{$$ = $2;}
 ;
 
 %%
