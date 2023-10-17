@@ -8,11 +8,12 @@
     void yyerror(const char *s);
     int yylex();
     int yywrap();
-    
+    ASTNode* root;
 %}
 
 %union {
     int int_val;
+    ASTNode* ast_node;
 }
 
 
@@ -21,7 +22,7 @@ MULT DIV MOD NOT AND OR XOR TERM
 
 %token <int_val> NUM
 
-%type <int_val> expr
+%type <ast_node> expr
 
 %left PLUS MINUS
 %left MULT DIV MOD
@@ -35,21 +36,25 @@ main: main calc
 | calc
 ;
 
-calc: expr TERM					{printf("%d\n", $1);}
+calc: expr TERM					{
+    root = $1;
+    print_ast(root,0); //print the ast
+    printf("\n");
+}
 ;
 
-expr: NUM					    {$$ = $1;}
-| MINUS expr %prec UNARY_MINUS	{$$ = -$2;}
-| NOT expr %prec NOT			{$$ = !$2;}
-| expr PLUS expr				{$$ = $1 + $3;}
-| expr MINUS expr				{$$ = $1 - $3;}
-| expr MULT expr				{$$ = $1 * $3;}
-| expr DIV expr				    {$$ = $1 / $3;}
-| expr MOD expr					{$$ = $1 % $3;}
-| expr AND expr					{$$ = $1 & $3;}
-| expr OR expr					{$$ = $1 | $3;}
-| expr XOR expr					{$$ = $1 ^ $3;}
-| LPAREN expr RPAREN			{$$ = $2;}
+expr: NUM					    {$$ = create_number_node($1);}
+| MINUS expr %prec UNARY_MINUS	{$$ = create_unary_op_node('!', $2);}
+| NOT expr %prec NOT			{$$ = create_unary_op_node('!', $2);}
+| expr PLUS expr				{$$ = create_binary_op_node('+', $1, $3);}
+| expr MINUS expr				{$$ = create_binary_op_node('-', $1, $3);}
+| expr MULT expr				{$$ = create_binary_op_node('*', $1, $3);}
+| expr DIV expr				    {$$ = create_binary_op_node('/', $1, $3);}
+| expr MOD expr					{$$ = create_binary_op_node('%', $1, $3);}
+| expr AND expr					{$$ = create_binary_op_node('&', $1, $3);}
+| expr OR expr					{$$ = create_binary_op_node('|', $1, $3);}
+| expr XOR expr					{$$ = create_binary_op_node('^', $1, $3);}
+| LPAREN expr RPAREN			{$$ = create_number_node($2);}
 ;
 
 %%

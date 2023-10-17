@@ -1,47 +1,57 @@
-// ast.c
 #include <stdio.h>
 #include <stdlib.h>
 #include "ast.h"
 
 ASTNode* create_number_node(int value) {
     ASTNode* node = (ASTNode*)malloc(sizeof(ASTNode));
-    node->type = "Number";
+    node->type = 'N';
     node->value = value;
     node->left = NULL;
     node->right = NULL;
     return node;
 }
 
-ASTNode* create_add_node(ASTNode* left, ASTNode* right) {
+ASTNode* create_unary_op_node(char type, ASTNode* left) {
     ASTNode* node = (ASTNode*)malloc(sizeof(ASTNode));
-    node->type = "Add";
+    node->type = type;
+    node->value = 0;
+    node->left = left;
+    node->right = NULL;
+    return node;
+}
+
+ASTNode* create_binary_op_node(char type, ASTNode* left, ASTNode* right) {
+    ASTNode* node = (ASTNode*)malloc(sizeof(ASTNode));
+    node->type = type;
+    node->value = 0;
     node->left = left;
     node->right = right;
     return node;
 }
 
-ASTNode* create_subtract_node(ASTNode* left, ASTNode* right) {
-    ASTNode* node = (ASTNode*)malloc(sizeof(ASTNode));
-    node->type = "Subtract";
-    node->left = left;
-    node->right = right;
-    return node;
-}
+void print_ast(ASTNode* node, int depth) {
+    if (node == NULL) {
+        return;
+    }
 
-ASTNode* create_multiply_node(ASTNode* left, ASTNode* right) {
-    ASTNode* node = (ASTNode*)malloc(sizeof(ASTNode));
-    node->type = "Multiply";
-    node->left = left;
-    node->right = right;
-    return node;
-}
+    // Indent based on the depth in the tree
+    for (int i = 0; i < depth; i++) {
+        printf("  ");
+    }
 
-ASTNode* create_divide_node(ASTNode* left, ASTNode* right) {
-    ASTNode* node = (ASTNode*)malloc(sizeof(ASTNode));
-    node->type = "Divide";
-    node->left = left;
-    node->right = right;
-    return node;
+    if (node->type != NULL) {
+        printf("%s", node->type);
+        if (strcmp(node->type, "Number") == 0) {
+            printf("(%d)\n", node->value);
+        } else {
+            printf("\n");
+        }
+    } else {
+        printf("NULL\n");
+    }
+
+    print_ast(node->left, depth + 1);
+    print_ast(node->right, depth + 1);
 }
 
 void free_ast(ASTNode* node) {

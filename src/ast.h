@@ -2,10 +2,10 @@
 #define AST_H
 
 typedef struct ASTNode {
-    char* type;      // Node type: "Number", "Add", "Subtract", "Multiply", "Divide"
-    int value;       // For "Number" nodes, stores the numeric value
-    struct ASTNode* left;   // Left child node
-    struct ASTNode* right;  // Right child node
+    char type;
+    int value;
+    struct ASTNode* left;
+    struct ASTNode* right;
 } ASTNode;
 
 ASTNode* create_number_node(int value);
