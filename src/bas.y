@@ -1,26 +1,27 @@
 %{
-    #include<stdio.h>
-    #include<string.h>
-    #include<stdlib.h>
-    #include<ctype.h>
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <ctype.h>
     #include "lex.yy.c"
-    #include "ast.h"
     void yyerror(const char *s);
     int yylex();
     int yywrap();
 %}
 
-%token LPAREN RPAREN PLUS MINUS
-MULT DIV MOD NOT AND OR XOR TERM
-
 %union{
-    ASTNode* ast_node;
+    struct ASTNode* ast_node;
     int number;
 }
 
+%token LPAREN RPAREN PLUS MINUS
+MULT DIV MOD NOT AND OR XOR TERM
+
+
 %token <number> NUM
 
-%type <ast_node> main calc expr
+%type <ast_node> main
+%type <ast_node> calc
+%type <ast_node> expr
 
 %left PLUS MINUS
 %left MULT DIV MOD
@@ -42,8 +43,8 @@ calc: expr TERM					{
 }
 ;
 
-expr: NUM					    {$$ = create_number_node($1);}
-| MINUS expr %prec UNARY_MINUS	{$$ = create_unary_op_node('!', $2);}
+expr: NUM					    {$<ast_node>$ = create_number_node($1);}
+| MINUS expr %prec UNARY_MINUS	{$$ = create_unary_op_node('-', $2);}
 | NOT expr %prec NOT			{$$ = create_unary_op_node('!', $2);}
 | expr PLUS expr				{$$ = create_binary_op_node('+', $1, $3);}
 | expr MINUS expr				{$$ = create_binary_op_node('-', $1, $3);}
