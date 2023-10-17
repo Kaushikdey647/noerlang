@@ -36,16 +36,11 @@ void print_ast(ASTNode* node, int depth) {
 
     // Indent based on the depth in the tree
     for (int i = 0; i < depth; i++) {
-        printf("  ");
+        printf("...");
     }
 
     if (node != NULL) {
-        printf("%c", node->type);
-        if ( node->type == 'N') {
-            printf("(%d)\n", node->value);
-        } else {
-            printf("\n");
-        }
+        printf("%c[%d]\n", node->type, node->value);
     } else {
         printf("NULL\n");
     }
