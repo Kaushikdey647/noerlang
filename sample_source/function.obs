@@ -1,3 +1,0 @@
-int16 fun sum = ( int8 a, int8 b ){
-    return a + b;
-}
